@@ -25,6 +25,8 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 ADMINS =[('timtor','opmsa02@gmail.com')]
 
+ALLOWED_HOSTS = ['*']
+
 
 # Application definition
 

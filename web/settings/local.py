@@ -12,7 +12,7 @@ ALLOWED_HOSTS = ['*']
 
 # App for local developement
 INSTALLED_APPS += [
-    'django_extensions'
+    # 'django_extensions'
 ]
 
 # Database
