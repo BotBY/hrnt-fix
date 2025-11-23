@@ -86,6 +86,12 @@ This project has been significantly refactored to modernize the stack and improv
 - **Python**: Codebase is now compatible with Python 3.9+.
 - **Node**: Engine requirement updated to Node >= 18.0.0.
 
+### Deployment (Render)
+- **Production Ready**: Configured `gunicorn` as the WSGI server and `whitenoise` for serving static files efficiently.
+- **Render Configuration**:
+    - **Build Command**: `pip install -r requirements.txt && yarn install && yarn run webpack:build && python manage.py collectstatic --noinput`
+    - **Start Command**: `gunicorn web.wsgi:application`
+
 ## Disclaimer 
 - Author have no legal liability to user's action.
 - Do not abuse this website. The world is filled with love, go outside and explore a new story.
