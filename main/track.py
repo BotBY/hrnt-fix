@@ -9,6 +9,7 @@ from math import floor, ceil
 from typing import List, Tuple, Optional, Any, Dict
 
 from django.http import JsonResponse, HttpResponse, HttpRequest
+from django.views.decorators.csrf import csrf_exempt
 from .models import Creeper, Victim, Footprint
 
 # the target info
@@ -438,6 +439,7 @@ def clearFootprintCreater(request: HttpRequest) -> HttpResponse:
     except Exception as e:
         return HttpResponse(status=400)
 
+@csrf_exempt
 def nearbyResponse(request: HttpRequest) -> JsonResponse:
     INVALID_AFTER = 60 * 60 * 24 * 365 * 100
     uuid = request.COOKIES.get('uuid')
@@ -467,6 +469,7 @@ def nearbyResponse(request: HttpRequest) -> JsonResponse:
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
+@csrf_exempt
 def memberProfileResponse(request: HttpRequest) -> JsonResponse:
     INVALID_AFTER = 60 * 60 * 24 * 365 * 100
     uuid = request.COOKIES.get('uuid')
