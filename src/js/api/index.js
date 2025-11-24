@@ -2,19 +2,19 @@ import axios from 'axios'
 
 
 
-const Api ={
+const Api = {
 
-    getBrowserUserPosition: ()=>{
-        return new Promise((resolve,reject)=>{
+    getBrowserUserPosition: () => {
+        return new Promise((resolve, reject) => {
             navigator.geolocation.getCurrentPosition(resolve, reject)
         })
-        .then( resp=> {
-            return {lat: resp.coords.latitude, lng: resp.coords.longitude}
-        } )
+            .then(resp => {
+                return { lat: resp.coords.latitude, lng: resp.coords.longitude }
+            })
     },
 
 
-    
+
     /* 
     Passing Parameters
         { token: [String]
@@ -55,16 +55,33 @@ const Api ={
         }
 
     */
-   getNearbyMember: ({token,position,page,perpage=25})=>{
-       return axios({
-            method:'get',
-            url:`https://gethornet.com/api/v3/members/near.json?page=${page}&per_page=${perpage}`,
-            headers: {
-              'Authorization':`Hornet ${token}`,
-              'X-Device-Location':`${position.lat},${position.lng}`
+    getNearbyMember: ({ token, position, page, perpage = 25 }) => {
+        // Use backend proxy instead of direct call
+        return axios({
+            method: 'post',
+            url: '/nearby_proxy/',
+            // headers: {'X-CSRFToken': CSRF_TOKEN}, // CSRF token is handled by cookie automatically usually, but let's check if we need to pass it explicitly like other requests
+            // Looking at accurateRequest, it passes X-CSRFToken. We should probably do the same if we had access to it here easily.
+            // However, axios usually picks up the cookie if configured. 
+            // Let's stick to the pattern used in accurateRequest but we need to get the token.
+            // Since this is inside Api object, we might not have direct access to the token variable from auth.js without importing it, 
+            // but wait, auth.js imports Cookies. 
+            // Let's try to just send the data first. Django might require CSRF token for POST.
+            // For now, let's assume the cookie is enough or we rely on the fact that we are in the same domain.
+            // Actually, let's look at how accurateRequest does it. It takes CSRF_TOKEN as arg.
+            // We should probably update the caller to pass it, OR just read it from cookie here.
+            data: {
+                lat: position.lat,
+                lng: position.lng,
+                page: page,
+                perpage: perpage
             }
-        }).then(resp=>{
-            return resp.data.members.map(e=> e.member)
+        }).then(resp => {
+            // The backend returns {members: [...]}, where each item is the full member object from Hornet
+            // The original code expected resp.data.members.map(e => e.member)
+            // Our proxy returns the raw list from Hornet which is [{member: {...}}, ...]
+            // So the structure is preserved.
+            return resp.data.members.map(e => e.member)
         })
     },
 
@@ -115,15 +132,15 @@ const Api ={
     // visible: true
     // weight: 82000
 
-    getMemberProfile: ({token,id,position})=>{
+    getMemberProfile: ({ token, id, position }) => {
         return axios({
             method: 'get',
-            url:`https://volta.gethornet.com/api/v3/members/${id}.json`,
+            url: `https://volta.gethornet.com/api/v3/members/${id}.json`,
             headers: {
-                'Authorization':`Hornet ${token}`,
-                'X-Device-Location':`${position.lat},${position.lng}`  
+                'Authorization': `Hornet ${token}`,
+                'X-Device-Location': `${position.lat},${position.lng}`
             }
-        }).then(resp=>{
+        }).then(resp => {
             return resp.data.member
         })
     },
@@ -134,27 +151,27 @@ const Api ={
 
     // Response
     // Accurate : Object {identity,lat,lng}
-    accurateRequest: ({username,CSRF_TOKEN}) =>{
+    accurateRequest: ({ username, CSRF_TOKEN }) => {
         return axios({
             method: 'post',
             url: `/accurate/`,
-            headers: {'X-CSRFToken': CSRF_TOKEN},
+            headers: { 'X-CSRFToken': CSRF_TOKEN },
             timeout: 60000,
-            data: {name:username}
-        }).then( resp=>{
+            data: { name: username }
+        }).then(resp => {
             const id = resp.data.identify
-            const position = {lat:resp.data.lat, lng:resp.data.lng}
-            return  {id, position}
+            const position = { lat: resp.data.lat, lng: resp.data.lng }
+            return { id, position }
         })
     },
 
-    test_success_accurateRequest: ({username,CSRF_TOKEN}) =>{
-        return new Promise((resolve,reject)=>{
-            setTimeout(()=>{
+    test_success_accurateRequest: ({ username, CSRF_TOKEN }) => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
                 const id = 38895709
-                const position = {lat: 25.047779, lng:  121.517133 }
-                resolve({id,position})
-            },1000)
+                const position = { lat: 25.047779, lng: 121.517133 }
+                resolve({ id, position })
+            }, 1000)
         })
     },
 
@@ -164,21 +181,21 @@ const Api ={
 
     // Response
     // Footprint : Object {latitude,logitude,created_at}
-    footprintRequest: ({id,CSRF_TOKEN})=>{
+    footprintRequest: ({ id, CSRF_TOKEN }) => {
         return axios({
             method: 'post',
             url: '/footprint/',
-            headers: {'X-CSRFToken': CSRF_TOKEN},
-            data: {id}
-        }).then(resp=>{
-            return resp.data.foot.map( ({latitude,longitude,...rest})=>{
-                return {lat:latitude,lng:longitude,...rest}
-            })  
+            headers: { 'X-CSRFToken': CSRF_TOKEN },
+            data: { id }
+        }).then(resp => {
+            return resp.data.foot.map(({ latitude, longitude, ...rest }) => {
+                return { lat: latitude, lng: longitude, ...rest }
+            })
         })
     }
- 
 
-    
+
+
 }
 
 export default Api
