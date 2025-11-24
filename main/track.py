@@ -230,28 +230,34 @@ class Track:
         return (guess0[0], guess0[1])
 
     def optimizeAccuracy(self, name: str, location80: Tuple[float, float]) -> Tuple[float, float]:
-        que = Queue()
-        threads = []
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        
+        effectloction = []
         
         # Function to be run in thread
         def check_probe(probe_loc):
             if self.memberdistance(name, probe_loc) == 80:
-                que.put(probe_loc)
+                return probe_loc
+            return None
 
         drange = np.linspace(-160, 160, num=21) / 111320.0
+        probes = []
         for dx in drange:
             for dy in drange:
                 probe = np.array(location80) + np.array([dx, 0] + np.array([0, dy]))
-                t = Thread(target=check_probe, args=(probe,))
-                t.start()
-                threads.append(t)
+                probes.append(probe)
 
-        for t in threads:
-            t.join()
-
-        effectloction = []
-        while not que.empty():
-            effectloction.append(que.get())
+        # Use ThreadPoolExecutor to limit the number of concurrent threads
+        # 20 workers should be safe for a small instance while still providing parallelism
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            future_to_probe = {executor.submit(check_probe, p): p for p in probes}
+            for future in as_completed(future_to_probe):
+                try:
+                    result = future.result()
+                    if result is not None:
+                        effectloction.append(result)
+                except Exception as exc:
+                    print(f'Probe generated an exception: {exc}')
 
         if not effectloction:
             return location80
