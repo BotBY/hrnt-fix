@@ -436,4 +436,33 @@ def clearFootprintCreater(request: HttpRequest) -> HttpResponse:
     except Exception as e:
         return HttpResponse(status=400)
 
+def nearbyResponse(request: HttpRequest) -> JsonResponse:
+    INVALID_AFTER = 60 * 60 * 24 * 365 * 100
+    uuid = request.COOKIES.get('uuid')
+    token = request.COOKIES.get('token')
+    
+    if not uuid:
+        return JsonResponse({'error': 'No UUID'}, status=400)
+        
+    track = Track(uuid, token)
+    
+    try:
+        data = request.body.decode('utf-8')
+        jsondata = json.loads(data)
+        
+        lat = float(jsondata.get('lat', 0))
+        lng = float(jsondata.get('lng', 0))
+        page = int(jsondata.get('page', 1))
+        per_page = int(jsondata.get('perpage', 25))
+        
+        members = track.getNearbyMember((lat, lng), page, per_page)
+        
+        response = JsonResponse({'members': members})
+        if track.token:
+            response.set_cookie('token', track.token, max_age=INVALID_AFTER)
+            
+        return response
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
 
