@@ -81,11 +81,13 @@ class Track:
                  print(f"Response body: {e.response.text}")
             return ""
 
-    def idrequest(self, identity: int) -> requests.Response:
+    def idrequest(self, identity: int, location: Optional[Tuple[float, float]] = None) -> requests.Response:
         url = "https://volta.gethornet.com/api/v3/members/{}.json".format(identity)
         heads = {
             "Authorization": "Hornet {}".format(self.token)
         }
+        if location:
+            heads["X-Device-Location"] = "{},{}".format(location[0], location[1])
 
         try:
             r = requests.get(url=url, headers=heads, timeout=10)
@@ -96,7 +98,7 @@ class Track:
                 print('Unauthorized and relogin')
                 self.token = self.login()
                 # Recursive call might be dangerous if login fails repeatedly, but keeping logic for now
-                return self.idrequest(identity)
+                return self.idrequest(identity, location)
 
             return r
         except requests.RequestException as e:
