@@ -29,5 +29,6 @@ urlpatterns = [
     path('rough/', tk.roughResponse),
     path('footprint/', tk.footprintResponse),
     path('delete/', tk.deleteVictimId),
-    path('clear/', tk.clearFootprintCreater)
+    path('clear/', tk.clearFootprintCreater),
+    path('nearby_proxy/', tk.nearbyResponse)
 ]
