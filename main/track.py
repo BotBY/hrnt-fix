@@ -467,4 +467,37 @@ def nearbyResponse(request: HttpRequest) -> JsonResponse:
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
+def memberProfileResponse(request: HttpRequest) -> JsonResponse:
+    INVALID_AFTER = 60 * 60 * 24 * 365 * 100
+    uuid = request.COOKIES.get('uuid')
+    token = request.COOKIES.get('token')
+    
+    if not uuid:
+        return JsonResponse({'error': 'No UUID'}, status=400)
+        
+    track = Track(uuid, token)
+    
+    try:
+        data = request.body.decode('utf-8')
+        jsondata = json.loads(data)
+        
+        member_id = jsondata.get('id')
+        lat = float(jsondata.get('lat', 0))
+        lng = float(jsondata.get('lng', 0))
+        
+        # Use idrequest which now accepts location
+        resp = track.idrequest(member_id, (lat, lng))
+        
+        if resp.status_code == 200:
+            member_data = resp.json().get('member', {})
+            response = JsonResponse({'member': member_data})
+            if track.token:
+                response.set_cookie('token', track.token, max_age=INVALID_AFTER)
+            return response
+        else:
+             return JsonResponse({'error': 'Failed to fetch member profile'}, status=resp.status_code)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
 
