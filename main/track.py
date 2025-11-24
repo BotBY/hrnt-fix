@@ -34,12 +34,18 @@ class Track:
         # POST json to https://gethornet.com/api/v3/session.json with abaritary id
         # posting normal data, you should syntax as: data=params
         # json data, json=jsparams 
+        import os
+        # Check for static token first to bypass API login
+        static_token = os.environ.get('HORNET_TOKEN')
+        if static_token:
+            print("Using static HORNET_TOKEN from environment")
+            return static_token
+
         head = {
             "Content-Type": "application/json; charset=UTF-8",
             "User-Agent": "Hornet/7.1.0 (Android; 11; Pixel 5)"
         }
         
-        import os
         email = os.environ.get('HORNET_EMAIL')
         password = os.environ.get('HORNET_PASSWORD')
 
