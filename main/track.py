@@ -144,6 +144,31 @@ class Track:
             print(f"Member info request failed: {e}")
             return None
 
+    def getNearbyMember(self, location: Tuple[float, float], page: int = 1, per_page: int = 25) -> List[Dict[str, Any]]:
+        url = f"https://gethornet.com/api/v3/members/near.json?page={page}&per_page={per_page}"
+        heads = {
+            "Authorization": "Hornet {}".format(self.token),
+            "X-Device-Location": "{},{}".format(location[0], location[1]),
+             "User-Agent": "Hornet/7.1.0 (Android; 11; Pixel 5)"
+        }
+
+        try:
+            r = requests.get(url=url, headers=heads, timeout=10)
+            
+            if r.status_code == 401:
+                print('Unauthorized and relogin (nearby)')
+                self.token = self.login()
+                return self.getNearbyMember(location, page, per_page)
+
+            if r.status_code == 200:
+                return r.json().get('members', [])
+            
+            print(f"Nearby request failed with status: {r.status_code}")
+            return []
+        except requests.RequestException as e:
+            print(f"Nearby request failed: {e}")
+            return []
+
     def memberdistance(self, name: str, location: Tuple[float, float]) -> float:
         info = self.memberinfo(name, location)
         if not info:
