@@ -35,7 +35,23 @@ class Track:
         # posting normal data, you should syntax as: data=params
         # json data, json=jsparams 
         head = {"Content-Type": "application/json; charset=UTF-8"}
-        jsparams = {"session": {"id": "{}".format(self.uuid), "provider": "UDID", "secret": ""}}
+        
+        import os
+        email = os.environ.get('HORNET_EMAIL')
+        password = os.environ.get('HORNET_PASSWORD')
+
+        if email and password:
+            print(f"Attempting login with email: {email}")
+            jsparams = {
+                "session": {
+                    "id": email,
+                    "provider": "Hornet",
+                    "secret": password
+                }
+            }
+        else:
+            print(f"Attempting login with UDID: {self.uuid}")
+            jsparams = {"session": {"id": "{}".format(self.uuid), "provider": "UDID", "secret": ""}}
 
         # Fixed URL typo: .jsonn -> .json
         try:
@@ -47,6 +63,9 @@ class Track:
             return token
         except requests.RequestException as e:
             print(f"Login request failed: {e}")
+            if hasattr(e, 'response') and e.response is not None:
+                 print(f"Response status: {e.response.status_code}")
+                 print(f"Response body: {e.response.text}")
             return ""
 
     def idrequest(self, identity: int) -> requests.Response:
