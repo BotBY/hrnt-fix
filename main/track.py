@@ -48,6 +48,7 @@ class Track:
         
         email = os.environ.get('HORNET_EMAIL')
         password = os.environ.get('HORNET_PASSWORD')
+        env_uuid = os.environ.get('HORNET_UUID')
 
         if email and password:
             print(f"Attempting login with email: {email}")
@@ -58,8 +59,11 @@ class Track:
                     "secret": password
                 }
             }
+        elif env_uuid:
+             print(f"Attempting login with specific UDID from env: {env_uuid}")
+             jsparams = {"session": {"id": "{}".format(env_uuid), "provider": "UDID", "secret": ""}}
         else:
-            print(f"Attempting login with UDID: {self.uuid}")
+            print(f"Attempting login with cookie UDID: {self.uuid}")
             jsparams = {"session": {"id": "{}".format(self.uuid), "provider": "UDID", "secret": ""}}
 
         # Fixed URL typo: .jsonn -> .json
