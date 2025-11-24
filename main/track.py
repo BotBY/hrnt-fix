@@ -240,7 +240,7 @@ class Track:
                 return probe_loc
             return None
 
-        drange = np.linspace(-160, 160, num=21) / 111320.0
+        drange = np.linspace(-160, 160, num=5) / 111320.0
         probes = []
         for dx in drange:
             for dy in drange:
