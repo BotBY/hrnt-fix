@@ -134,11 +134,12 @@ const Api = {
 
     getMemberProfile: ({ token, id, position }) => {
         return axios({
-            method: 'get',
-            url: `https://volta.gethornet.com/api/v3/members/${id}.json`,
-            headers: {
-                'Authorization': `Hornet ${token}`,
-                'X-Device-Location': `${position.lat},${position.lng}`
+            method: 'post',
+            url: '/member_proxy/',
+            data: {
+                id: id,
+                lat: position.lat,
+                lng: position.lng
             }
         }).then(resp => {
             return resp.data.member
