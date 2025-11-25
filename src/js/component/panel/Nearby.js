@@ -4,17 +4,19 @@ import ReactDOM from 'react-dom'
 import styled from 'styled-components'
 import posed, { PoseGroup } from 'react-pose'
 
-import {observer, inject} from 'mobx-react'
+import { observer, inject } from 'mobx-react'
 import { observable, reaction, toJS } from 'mobx';
-import { withRouter, Route} from 'react-router-dom'
+import { withRouter, Route } from 'react-router-dom'
 
 
 import ToggledPanel from 'component/ToggledPanel'
 
-import { Masonry, 
-        CellMeasurer,
-        CellMeasurerCache,
-        createMasonryCellPositioner} from 'react-virtualized'
+import {
+    Masonry,
+    CellMeasurer,
+    CellMeasurerCache,
+    createMasonryCellPositioner
+} from 'react-virtualized'
 
 
 import Member from './Member';
@@ -22,14 +24,14 @@ import DefaultMember from './DefaultMember'
 
 import ScrollObserver from './ScrollObserver'
 import Profile from 'component/Profile';
-import {Panel as PanelStyle} from 'styled'
+import { Panel as PanelStyle } from 'styled'
 
 import panelConstant from 'constant/panel'
 
 
 
 
-const memberHeight =120
+const memberHeight = 120
 const memberWidth = 80
 const masonryHeight = 520
 const masonryWidth = 400
@@ -49,7 +51,7 @@ const ProfileRoot = styled.div`
     `
 
 const PoseContainer = posed.div({
-    
+
 })
 
 
@@ -64,17 +66,17 @@ const MemberProfile = posed(styled(Profile)`
     
     `)
     ({
-        enter: { 
+        enter: {
             y: 0,
-            transition:{
+            transition: {
                 duration: 150,
                 ease: 'easeInOut'
             }
 
         },
-        exit: { 
+        exit: {
             y: 'calc(100% + 200px)',
-            transition:{
+            transition: {
                 duration: 150,
                 ease: 'easeInOut'
             }
@@ -83,7 +85,7 @@ const MemberProfile = posed(styled(Profile)`
 
 
 @withRouter
-@inject('nearbyState','panelState','profileState','mapState','searchState')
+@inject('nearbyState', 'panelState', 'profileState', 'mapState', 'searchState')
 @observer
 class Nearby extends Component {
 
@@ -103,7 +105,7 @@ class Nearby extends Component {
             defaultHeight: memberHeight,
             defaultWidth: memberWidth,
             fixedWidth: true
-          })
+        })
 
         this.cellPostionConfig = {
             cellMeasurerCache: this.cache,
@@ -111,63 +113,63 @@ class Nearby extends Component {
             columnWidth: memberWidth,
             spacer: 15
         }
-        
+
         this.cellPositioner = createMasonryCellPositioner(this.cellPostionConfig)
     }
 
     render() {
         return (
-          <Wrapper ref={this.props.myref}  {...this.props}>
-            <ToggledPanel ToggleClick={this.toggleOff}>
-                
-                <Masonry 
-                ref={dom=>this.masonryDom=dom}
-                style={{outline:'none'}}
-                overscanByPixels = {150}
-                cellCount={ !this.nearby.loading ? this.nearby.members.length: this.nearby.members.length+20}
-                cellMeasurerCache={this.cache}
-                cellPositioner={this.cellPositioner}
-                cellRenderer={this.cellRenderer}
-                height={masonryHeight}
-                width={masonryWidth} />
-                
+            <Wrapper ref={this.props.myref}  {...this.props}>
+                <ToggledPanel ToggleClick={this.toggleOff}>
 
-                <ProfileRoot id='profile-root'>
-                    <PoseGroup >
-                    {this.profile.ids.map((id,index)=>
-                        <MemberProfile withParent={false} key={index}
-                        id={id} 
-                        position={this.nearby.position} 
-                        toggleDownClick={this.profileToggleDown}
-                        profileDidRendered={this.profileDidRendered}
-                        profileRequestDone={this.profileRequestDone}
-                        istracking={this.search.loading}
-                        trackClicked={this.trackClicked}/>
-                        )}
-                    </PoseGroup>
-                </ProfileRoot>
+                    <Masonry
+                        ref={dom => this.masonryDom = dom}
+                        style={{ outline: 'none' }}
+                        overscanByPixels={150}
+                        cellCount={!this.nearby.loading ? this.nearby.members.length : this.nearby.members.length + 20}
+                        cellMeasurerCache={this.cache}
+                        cellPositioner={this.cellPositioner}
+                        cellRenderer={this.cellRenderer}
+                        height={masonryHeight}
+                        width={masonryWidth} />
 
-            </ToggledPanel>
-    
-          </Wrapper>
+
+                    <ProfileRoot id='profile-root'>
+                        <PoseGroup >
+                            {this.profile.ids.map((id, index) =>
+                                <MemberProfile withParent={false} key={index}
+                                    id={id}
+                                    position={this.nearby.position}
+                                    toggleDownClick={this.profileToggleDown}
+                                    profileDidRendered={this.profileDidRendered}
+                                    profileRequestDone={this.profileRequestDone}
+                                    istracking={this.search.loading}
+                                    trackClicked={this.trackClicked} />
+                            )}
+                        </PoseGroup>
+                    </ProfileRoot>
+
+                </ToggledPanel>
+
+            </Wrapper>
 
         );
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.panel.set(panelConstant.NEARBY)
         this.reactionDisposer = this.mockPositionReaction()
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.profile.ids = []
         this.reactionDisposer()
     }
 
-    
-    mockPositionReaction =()=>{
-        return reaction(()=>this.map.mockposition,
-            position=>{
+
+    mockPositionReaction = () => {
+        return reaction(() => this.map.mockposition,
+            position => {
                 this.cache.clearAll();
                 this.cellPositioner.reset(this.cellPostionConfig);
                 this.masonryDom.clearCellPositions();
@@ -175,79 +177,81 @@ class Nearby extends Component {
         )
     }
 
-    toggleOff = ()=>{
+    toggleOff = () => {
         this.panel.init()
     }
 
-    cellRenderer = ({ index, key, parent, style })=>{
+    cellRenderer = ({ index, key, parent, style }) => {
         return (
             <CellMeasurer
-            cache={this.cache}
-            index={index}
-            key={key}
-            parent={parent} >
+                cache={this.cache}
+                index={index}
+                key={key}
+                parent={parent} >
                 <div style={style} >
-                { this.setMember(key)}
+                    {this.setMember(key)}
                 </div>
-            </CellMeasurer>    
+            </CellMeasurer>
         )
     }
 
-    setMember = (key)=>{
+    setMember = (key) => {
         const size = this.nearby.members.length
 
-        if(size > key){
+        if (size > key) {
             const member = this.nearby.members[key]
 
             // set observerIntersction to the 10th last member
-            if( key === size-10){
+            if (key === size - 10) {
                 return <ScrollObserver isIntersecting={this.isIntersecting}>
-                            <Member {...member} 
-                            headClick={this.headClick.bind(this,member.id)}/>
-                       </ScrollObserver>
-            }else{
-                return <Member {...member} 
-                        headClick={this.headClick.bind(this,member.id)}/>
+                    <Member {...member}
+                        headClick={this.headClick.bind(this, member.id)} />
+                </ScrollObserver>
+            } else {
+                return <Member {...member}
+                    headClick={this.headClick.bind(this, member.id)} />
             }
         }
         else {
-            return <DefaultMember/>
+            return <DefaultMember />
         }
     }
 
-    isIntersecting = ()=>{
+    isIntersecting = () => {
         console.log('Intersection triggered')
-        if(!this.nearby.loading) this.nearby.nextPage() 
+        if (!this.nearby.loading) this.nearby.nextPage()
     }
 
-    trackClicked = (username) =>{
+    trackClicked = (username) => {
         this.search.submitRequest(username)
-        .then(({id,position})=>{
-            this.map.setFootprint(position)
-        })
+            .then(({ id, position }) => {
+                this.map.setFootprint(position)
+            })
     }
 
-    profileToggleDown = ()=>{
+    profileToggleDown = () => {
         this.profile.ids.pop()
         this.map.clearFootprint()
-        this.profile.ids.length ? null: this.panel.set(panelConstant.NEARBY)
+        this.profile.ids.length ? null : this.panel.set(panelConstant.NEARBY)
     }
 
-    profileDidRendered = ()=>{
+    profileDidRendered = () => {
         this.panel.set(panelConstant.PROFILE)
     }
 
-    profileRequestDone = (id)=>{
+    profileRequestDone = (id) => {
         this.map.clearFootprint()
         this.map.setFootprintbyRequest(id)
     }
 
-    headClick =(id)=>{
+    headClick = (id) => {
+        console.log('DEBUG: Nearby.headClick called with id:', id)
         this.profile.ids.push(id)
+        console.log('DEBUG: profile.ids is now:', toJS(this.profile.ids))
     }
 }
 
 
 
 
-export default React.forwardRef((props,ref)=> <Nearby myref={ref} {...props}/>) 
+export default React.forwardRef((props, ref) => <Nearby myref={ref} {...props} />) 
