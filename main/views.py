@@ -15,7 +15,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     if 'uuid' not in request.COOKIES or not Creeper.objects.filter(uuid=request.COOKIES['uuid']).exists():
         INVALID_AFTER = 60 * 60 * 24 * 365 * 100
-        template_name = 'index.html' if agent.is_pc else 'legacy-index.html'
+        template_name = 'index.html'
         response = render(request, template_name)
         
         new_uuid = uuid.uuid1().hex
@@ -37,7 +37,7 @@ def index(request: HttpRequest) -> HttpResponse:
         #  too powerful and clean!!? 
         #  double underline foreign to whose and again foreign to created_by ...
         victims = Victim.objects.filter(whose__created_by__uuid=current_uuid).distinct()
-        template_name = 'index.html' if agent.is_pc else 'legacy-index.html'
+        template_name = 'index.html'
         response = render(request, template_name, {'victims': victims})
 
     return response
