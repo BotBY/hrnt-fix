@@ -56,6 +56,7 @@ const Api = {
 
     */
     getNearbyMember: ({ token, position, page, perpage = 25 }) => {
+        console.log('DEBUG: api.getNearbyMember called with:', { position, page })
         // Use backend proxy instead of direct call
         return axios({
             method: 'post',
