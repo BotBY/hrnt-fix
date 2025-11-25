@@ -230,8 +230,10 @@ class Nearby extends Component {
     }
 
     profileToggleDown = () => {
+        console.log('DEBUG: profileToggleDown called')
         this.profile.ids.pop()
-        this.map.clearFootprint()
+        console.log('DEBUG: profile.ids popped. Remaining:', toJS(this.profile.ids))
+        // this.map.clearFootprint() // Removed to keep live marker
         this.profile.ids.length ? null : this.panel.set(panelConstant.NEARBY)
     }
 
