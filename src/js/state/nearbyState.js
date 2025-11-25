@@ -50,6 +50,7 @@ class Nearby {
 
 
     @action renew = (position) => {
+        console.log('DEBUG: nearbyState.renew called with:', position)
         this.position = position
         this.members = []
         this.page = 0
