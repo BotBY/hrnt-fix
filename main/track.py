@@ -357,12 +357,14 @@ def accurateResponse(request: HttpRequest) -> JsonResponse:
         # insert into database if success
         info = track.memberinfo(name, location)
         if not info:
+             print(f"DEBUG: accurateResponse: Member info not found for {name} at {location}")
              return JsonResponse({'error': 'Member info not found'}, status=404)
              
         identify = info['member']['id']
         # last appear can only request by id
         id_resp = track.idrequest(identify)
         if id_resp.status_code != 200:
+             print(f"DEBUG: accurateResponse: ID request failed for {identify}. Status: {id_resp.status_code}")
              return JsonResponse({'error': 'ID request failed'}, status=id_resp.status_code)
              
         idrequest = id_resp.json()
@@ -391,6 +393,7 @@ def accurateResponse(request: HttpRequest) -> JsonResponse:
 
         return response
     except Exception as e:
+        print(f"DEBUG: accurateResponse error: {e}")
         return JsonResponse({'error': str(e)}, status=400)
 
 def footprintResponse(request: HttpRequest) -> JsonResponse:
