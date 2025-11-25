@@ -252,12 +252,15 @@ class App extends Component {
 
 
     mockpositionReaction = () => {
-        console.log('DEBUG: Setting up mockpositionReaction in App.js')
-        reaction(() => {
-            console.log('DEBUG: Tracking mockposition:', this.map.mockposition)
-            return this.map.mockposition
-        },
-            position => {
+        console.log('DEBUG: Setting up mockpositionReaction in App.js (autorun)')
+        return reaction(
+            () => {
+                // Explicitly access the observable property
+                const pos = this.map.mockposition
+                console.log('DEBUG: Tracking mockposition changed:', pos)
+                return pos
+            },
+            (position) => {
                 console.log('DEBUG: App.js reaction triggered. Calling nearby.renew with:', position)
                 if (position) {
                     this.nearby.renew(position)
