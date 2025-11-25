@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
-import posed, { PoseGroup,} from 'react-pose'
+import posed, { PoseGroup, } from 'react-pose'
 
 import {
-    Route, 
+    Route,
     Switch,
-    BrowserRouter as Router, 
-    withRouter 
+    BrowserRouter as Router,
+    withRouter
 } from 'react-router-dom'
 
 import { Provider, inject, observer } from 'mobx-react';
@@ -23,10 +23,12 @@ import Search from './Search'
 
 import Navigation from 'panel/Navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperPlane, faHeart, faCommentDots,
-        faPencilAlt, faCrosshairs,
-        faGlobeAmericas , faSearchLocation,
-        faMapMarker  } from '@fortawesome/free-solid-svg-icons'
+import {
+    faPaperPlane, faHeart, faCommentDots,
+    faPencilAlt, faCrosshairs,
+    faGlobeAmericas, faSearchLocation,
+    faMapMarker
+} from '@fortawesome/free-solid-svg-icons'
 
 import panelConstant from 'constant/panel'
 import authConstant from 'constant/auth'
@@ -37,8 +39,10 @@ import Nearby from 'panel/Nearby';
 import About from 'panel/About'
 import Like from 'panel/Like'
 
-import { Icon as IconStyle,
-         Panel as PanelStyle} from 'styled';
+import {
+    Icon as IconStyle,
+    Panel as PanelStyle
+} from 'styled';
 
 
 
@@ -90,26 +94,26 @@ const NavigationPanel = posed(styled(Navigation)`
      ${PanelStyle}
     `)
     ({
-        enter: { 
+        enter: {
             opacity: 1,
         },
-        exit: { 
-            opacity: 0 ,
+        exit: {
+            opacity: 0,
         }
     })
 
 
 
 const slideInPose = {
-    enter: { 
+    enter: {
         x: 0,
-        transition:{
+        transition: {
             ease: 'easeInOut',
         }
     },
-    exit: { 
+    exit: {
         x: 'calc(-100% - 100px)',
-        transition:{
+        transition: {
             ease: 'easeInOut',
         }
     },
@@ -120,7 +124,7 @@ const NearbyPanel = posed(styled(Nearby)`
     display: inline-block;
     width: 400px;
     `)
-    ({...slideInPose})
+    ({ ...slideInPose })
 
 
 const AboutPanel = posed(styled(About)`
@@ -128,7 +132,7 @@ const AboutPanel = posed(styled(About)`
     width: 360px;
 
     `)
-    ({...slideInPose})
+    ({ ...slideInPose })
 
 
 
@@ -137,10 +141,10 @@ const LikePanel = posed(styled(Like)`
     width: 400px;
 
     `)
-    ({...slideInPose})
+    ({ ...slideInPose })
 
 const RouteContainer = posed.div({
-    });
+});
 
 
 
@@ -154,7 +158,7 @@ const FaIcon = styled(FontAwesomeIcon)`
 
 
 @withRouter
-@inject('nearbyState','panelState','profileState','mapState','searchState')
+@inject('nearbyState', 'panelState', 'profileState', 'mapState', 'searchState')
 @observer
 class App extends Component {
 
@@ -168,16 +172,17 @@ class App extends Component {
         this.profile = this.props.profileState
         this.search = this.props.searchState
 
-        
+
         this.navigationWidget = [
-            {  Icon: <FaIcon icon={faPaperPlane}/>,
-               description: "Nearby",
-               color:'cornflowerblue',
-               id: panelConstant.NEARBY,
-               iconClicked : ()=> {
-                   this.props.history.push('nearby')
-                   this.panel.set(panelConstant.NEARBY)
-               }
+            {
+                Icon: <FaIcon icon={faPaperPlane} />,
+                description: "Nearby",
+                color: 'cornflowerblue',
+                id: panelConstant.NEARBY,
+                iconClicked: () => {
+                    this.props.history.push('nearby')
+                    this.panel.set(panelConstant.NEARBY)
+                }
             },
             // {  Icon: <FaIcon icon={faHeart}/>,
             //     description: "Like",
@@ -189,16 +194,17 @@ class App extends Component {
             //     }
             // }
             ,
-            {  Icon: <FaIcon icon={faCommentDots}/>,
+            {
+                Icon: <FaIcon icon={faCommentDots} />,
                 description: "About",
                 color: 'lightslategray',
-                iconClicked : ()=> {
+                iconClicked: () => {
                     this.props.history.push('about')
                     this.panel.set(panelConstant.ABOUT)
                 }
             }
         ]
-        
+
 
     }
 
@@ -207,25 +213,25 @@ class App extends Component {
             <Wrapper>
                 <Board>
                     <FlexBoard>
-                        <SearchBar 
-                            setInputRef ={dom=> this.inputDom = dom}
+                        <SearchBar
+                            setInputRef={dom => this.inputDom = dom}
                             inputKeyDown={this.inputKeyDown}
-                            loading={this.search.loading}/>            
+                            loading={this.search.loading} />
                         <PoseGroup>
                             {/* Without passing RoutesContainer a key, PoseGroup doesn’t know that it has a new child */}
-                            <RouteContainer key={this.props.location.pathname}> 
-                                {/* use Switch to render the first match Route*/ }
+                            <RouteContainer key={this.props.location.pathname}>
+                                {/* use Switch to render the first match Route*/}
                                 <Switch location={this.props.location}>
-                                <Route exact path='/' render={props=> 
-                                    <NavigationPanel {...props} 
-                                        widgets={this.navigationWidget}/>}/>
-                                <Route path='/nearby' render={props=> 
-                                    <NearbyPanel {...props} />}/>
-                                <Route path='/like' render={props=>
-                                    <LikePanel {...props}/>
-                                    }/>
-                                <Route paht='/about' render={props=>
-                                    <AboutPanel {...props} />}/>
+                                    <Route exact path='/' render={props =>
+                                        <NavigationPanel {...props}
+                                            widgets={this.navigationWidget} />} />
+                                    <Route path='/nearby' render={props =>
+                                        <NearbyPanel {...props} />} />
+                                    <Route path='/like' render={props =>
+                                        <LikePanel {...props} />
+                                    } />
+                                    <Route paht='/about' render={props =>
+                                        <AboutPanel {...props} />} />
                                 </Switch>
                             </RouteContainer>
                         </PoseGroup>
@@ -233,81 +239,86 @@ class App extends Component {
                 </Board>
 
                 {this.setMapControl(this.panel.id)}
-                <Map/>
+                <Map />
             </Wrapper>
         );
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.mockpositionReaction()
         this.panelIdReaction()
     }
 
 
-    mockpositionReaction= () =>{
-        reaction(()=>this.map.mockposition,
-            position=>{this.nearby.renew(position)}   
+    mockpositionReaction = () => {
+        reaction(() => this.map.mockposition,
+            position => {
+                console.log('DEBUG: App.js reaction triggered. Calling nearby.renew with:', position)
+                this.nearby.renew(position)
+            }
         )
     }
 
 
-    panelIdReaction = ()=>{
-        reaction(()=> this.panel.id,
-        id=>{
-            switch(id){
-                case panelConstant.NAVIGATION:
-                    this.draw = false
-                    this.map.unregistClickMock()
-                    this.props.history.push('/')
-                    break
-                case panelConstant.NEARBY:
-                    this.draw? this.map.registClickMock() : null
-                    this.props.history.push('/nearby')
-                    break
-                case panelConstant.PROFILE:
-                    this.map.unregistClickMock()
-                    break
-            }
-        })
+    panelIdReaction = () => {
+        reaction(() => this.panel.id,
+            id => {
+                switch (id) {
+                    case panelConstant.NAVIGATION:
+                        this.draw = false
+                        this.map.unregistClickMock()
+                        this.props.history.push('/')
+                        break
+                    case panelConstant.NEARBY:
+                        this.draw ? this.map.registClickMock() : null
+                        this.props.history.push('/nearby')
+                        break
+                    case panelConstant.PROFILE:
+                        this.map.unregistClickMock()
+                        break
+                }
+            })
     }
-    
 
-    inputKeyDown = (e)=>{
+
+    inputKeyDown = (e) => {
         // enter key
-        if(e.keyCode === 13){
-            const username = this.inputDom.value.replace('@','')
+        if (e.keyCode === 13) {
+            const username = this.inputDom.value.replace('@', '')
 
 
             this.search.submitRequest(username)
-            .then(({id,position})=>{
-                // onSearchSuccess
-                this.inputDom.value =''
-                this.props.history.push('nearby')
-                // show profile panel
-                this.panel.set(panelConstant.PROFILE)
-                this.profile.ids.push(id)
-                this.map.setFootprint(position)
-            })
+                .then(({ id, position }) => {
+                    // onSearchSuccess
+                    this.inputDom.value = ''
+                    this.props.history.push('nearby')
+                    // show profile panel
+                    this.panel.set(panelConstant.PROFILE)
+                    this.profile.ids.push(id)
+                    this.map.setFootprint(position)
+                })
             this.inputDom.blur()
         }
     }
 
-    setMapControl=(id)=>{
+    setMapControl = (id) => {
 
         const nearbyMapControl = [
-            { Icon: <FaIcon color={this.draw? 'cornflowerblue': ''} icon={faPencilAlt}/>,
-              description: "pencil",
-              iconClicked: this.penClicked
+            {
+                Icon: <FaIcon color={this.draw ? 'cornflowerblue' : ''} icon={faPencilAlt} />,
+                description: "pencil",
+                iconClicked: this.penClicked
             },
-            { Icon: <FaIcon icon={faCrosshairs}/>,
-              description: "position",
-              iconClicked: this.myPlaceClicked
+            {
+                Icon: <FaIcon icon={faCrosshairs} />,
+                description: "position",
+                iconClicked: this.myPlaceClicked
             }
         ]
-    
-        switch(id){
+
+        switch (id) {
             case panelConstant.NEARBY:
-                return <Mapcontroller controls={nearbyMapControl}/>
+                return <Mapcontroller controls={nearbyMapControl} />
             case panelConstant.PROFILE:
                 return null
             case panelConstant.Navigation:
@@ -316,18 +327,18 @@ class App extends Component {
                 return null
         }
     }
-    myPlaceClicked=()=>{
+    myPlaceClicked = () => {
         api.getBrowserUserPosition()
-        .then(position=>{
-            this.map.setMyPosition(position, mapConstant.StreetZoomSize)
-        })
-        .catch(error=>{
-            this.map.setMyPosition( mapConstant.DEFAULT_CENTER_POSITION, mapConstant.IslandZoomSize)
-        });
-    
+            .then(position => {
+                this.map.setMyPosition(position, mapConstant.StreetZoomSize)
+            })
+            .catch(error => {
+                this.map.setMyPosition(mapConstant.DEFAULT_CENTER_POSITION, mapConstant.IslandZoomSize)
+            });
+
     }
 
-    penClicked = ()=>{
+    penClicked = () => {
         this.draw = !this.draw
         this.draw ? this.map.registClickMock() : this.map.unregistClickMock()
     }
@@ -341,7 +352,7 @@ class App extends Component {
 const Main = () => (
     <Provider {...state}>
         <Router>
-            <App/>
+            <App />
         </Router>
     </Provider>
 )
