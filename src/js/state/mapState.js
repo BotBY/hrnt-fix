@@ -83,10 +83,13 @@ class Map {
     }
 
     setFootprint(position) {
+        console.log('DEBUG: setFootprint called with:', position)
         this.liveFootprintGroup.clearLayers() // Clear previous live marker
         this.map.setView(position, mapConstant.StreetZoomSize)
-        L.marker(position, { icon: Lfootprint }).addTo(this.liveFootprintGroup)
+        const marker = L.marker(position, { icon: Lfootprint })
+        marker.addTo(this.liveFootprintGroup)
         this.liveFootprintGroup.addTo(this.map)
+        console.log('DEBUG: liveFootprintGroup has layers:', this.liveFootprintGroup.getLayers().length)
     }
 
 
