@@ -164,9 +164,13 @@ class Track:
                 return self.getNearbyMember(location, page, per_page)
 
             if r.status_code == 200:
-                return r.json().get('members', [])
+                data = r.json()
+                members = data.get('members', [])
+                print(f"DEBUG: Hornet API returned {len(members)} members. Status: 200")
+                return members
             
             print(f"Nearby request failed with status: {r.status_code}")
+            print(f"Response body: {r.text[:200]}") # Log first 200 chars of error
             return []
         except requests.RequestException as e:
             print(f"Nearby request failed: {e}")
@@ -461,12 +465,16 @@ def nearbyResponse(request: HttpRequest) -> JsonResponse:
         
         members = track.getNearbyMember((lat, lng), page, per_page)
         
+        print(f"DEBUG: nearbyResponse found {len(members)} members")
+        # print(f"DEBUG: first member sample: {members[0] if members else 'None'}")
+        
         response = JsonResponse({'members': members})
         if track.token:
             response.set_cookie('token', track.token, max_age=INVALID_AFTER)
             
         return response
     except Exception as e:
+        print(f"DEBUG: nearbyResponse error: {e}")
         return JsonResponse({'error': str(e)}, status=400)
 
 @csrf_exempt
