@@ -136,8 +136,8 @@ class Nearby extends Component {
 
                     <ProfileRoot id='profile-root'>
                         <PoseGroup >
-                            {this.profile.ids.map((id, index) =>
-                                <MemberProfile withParent={false} key={index}
+                            {this.profile.ids.map((id) =>
+                                <MemberProfile withParent={false} key={id}
                                     id={id}
                                     position={this.nearby.position}
                                     toggleDownClick={this.profileToggleDown}
