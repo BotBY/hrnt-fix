@@ -362,7 +362,7 @@ def accurateResponse(request: HttpRequest) -> JsonResponse:
              
         identify = info['member']['id']
         # last appear can only request by id
-        id_resp = track.idrequest(identify)
+        id_resp = track.idrequest(identify, location)
         if id_resp.status_code != 200:
              print(f"DEBUG: accurateResponse: ID request failed for {identify}. Status: {id_resp.status_code}")
              return JsonResponse({'error': 'ID request failed'}, status=id_resp.status_code)
