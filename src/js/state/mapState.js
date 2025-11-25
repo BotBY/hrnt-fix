@@ -36,6 +36,7 @@ class Map {
     }
 
     @action mockTo = (position) => {
+        console.log('DEBUG: mapState.mockTo called with:', position)
         this.mockposition = position
         this.mockGroup.clearLayers()
 
