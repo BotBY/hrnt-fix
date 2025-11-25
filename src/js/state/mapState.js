@@ -12,6 +12,7 @@ class Map {
     mockGroup
     mypositionGroup
     footprintGroup
+    liveFootprintGroup
     @observable mockposition = mapConstant.DEFAULT_CENTER_POSITION
 
 
@@ -33,6 +34,7 @@ class Map {
         this.mockGroup = L.layerGroup().addTo(this.map)
         this.mypositionGroup = L.layerGroup().addTo(this.map)
         this.footprintGroup = L.layerGroup().addTo(this.map)
+        this.liveFootprintGroup = L.layerGroup().addTo(this.map)
 
         this.map.on('moveend', () => {
             const center = this.map.getCenter()
@@ -62,6 +64,7 @@ class Map {
     }
 
     setFootprintbyRequest = (id) => {
+        this.footprintGroup.clearLayers() // Clear history only
         api.footprintRequest({
             id: id,
             CSRF_TOKEN: authConstnat.CSRF_TOKEN
@@ -80,15 +83,18 @@ class Map {
     }
 
     setFootprint(position) {
+        this.liveFootprintGroup.clearLayers() // Clear previous live marker
         this.map.setView(position, mapConstant.StreetZoomSize)
-        L.marker(position, { icon: Lfootprint }).addTo(this.footprintGroup)
-        this.footprintGroup.addTo(this.map)
+        L.marker(position, { icon: Lfootprint }).addTo(this.liveFootprintGroup)
+        this.liveFootprintGroup.addTo(this.map)
     }
 
 
     clearFootprint = () => {
         this.footprintGroup.clearLayers()
+        this.liveFootprintGroup.clearLayers()
         this.footprintGroup.addTo(this.map)
+        this.liveFootprintGroup.addTo(this.map)
     }
 
 
