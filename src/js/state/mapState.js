@@ -33,6 +33,12 @@ class Map {
         this.mockGroup = L.layerGroup().addTo(this.map)
         this.mypositionGroup = L.layerGroup().addTo(this.map)
         this.footprintGroup = L.layerGroup().addTo(this.map)
+
+        this.map.on('moveend', () => {
+            const center = this.map.getCenter()
+            console.log('DEBUG: Map moveend. Updating mockposition to:', center)
+            this.mockTo(center)
+        })
     }
 
     @action mockTo = (position) => {
