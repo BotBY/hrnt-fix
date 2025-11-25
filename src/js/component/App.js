@@ -245,17 +245,23 @@ class App extends Component {
     }
 
     componentDidMount() {
+        console.log('DEBUG: App.componentDidMount called')
         this.mockpositionReaction()
         this.panelIdReaction()
     }
 
 
     mockpositionReaction = () => {
-        reaction(() => this.map.mockposition,
+        console.log('DEBUG: Setting up mockpositionReaction in App.js')
+        reaction(() => {
+            console.log('DEBUG: Tracking mockposition:', this.map.mockposition)
+            return this.map.mockposition
+        },
             position => {
                 console.log('DEBUG: App.js reaction triggered. Calling nearby.renew with:', position)
                 this.nearby.renew(position)
-            }
+            },
+            { fireImmediately: true }
         )
     }
 
