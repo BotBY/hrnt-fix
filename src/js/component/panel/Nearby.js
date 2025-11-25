@@ -240,7 +240,6 @@ class Nearby extends Component {
     }
 
     profileRequestDone = (id) => {
-        this.map.clearFootprint()
         this.map.setFootprintbyRequest(id)
     }
 
