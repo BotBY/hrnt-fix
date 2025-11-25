@@ -12,7 +12,7 @@ class Map {
     mockGroup
     mypositionGroup
     footprintGroup
-    @observable mockposition
+    @observable mockposition = mapConstant.DEFAULT_CENTER_POSITION
 
 
     init = (map) => {
