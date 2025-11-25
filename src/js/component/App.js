@@ -259,7 +259,11 @@ class App extends Component {
         },
             position => {
                 console.log('DEBUG: App.js reaction triggered. Calling nearby.renew with:', position)
-                this.nearby.renew(position)
+                if (position) {
+                    this.nearby.renew(position)
+                } else {
+                    console.log('DEBUG: Position is undefined, skipping renew')
+                }
             },
             { fireImmediately: true }
         )
