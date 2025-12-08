@@ -22,8 +22,8 @@ class Map {
     mypositionGroup
     footprintGroup
     liveFootprintGroup
-    isInitialized = false  // Flag to prevent API calls before geolocation
-    @observable mockposition = null  // Start as null, set when geolocation resolves
+    @observable isInitialized = false  // Flag to prevent API calls before geolocation
+    @observable mockposition = mapConstant.DEFAULT_CENTER_POSITION  // Initial position for map
 
 
     init = (map) => {
