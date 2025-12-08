@@ -255,17 +255,18 @@ class App extends Component {
         console.log('DEBUG: Setting up mockpositionReaction in App.js (autorun)')
         return reaction(
             () => {
-                // Explicitly access the observable property
+                // Track both mockposition and isInitialized
                 const pos = this.map.mockposition
-                console.log('DEBUG: Tracking mockposition changed:', pos)
-                return pos
+                const initialized = this.map.isInitialized
+                console.log('DEBUG: Tracking mockposition changed:', pos, 'initialized:', initialized)
+                return { pos, initialized }
             },
-            (position) => {
-                console.log('DEBUG: App.js reaction triggered. Calling nearby.renew with:', position)
-                if (position) {
-                    this.nearby.renew(position)
+            ({ pos, initialized }) => {
+                console.log('DEBUG: App.js reaction triggered. Position:', pos, 'Initialized:', initialized)
+                if (initialized && pos) {
+                    this.nearby.renew(pos)
                 } else {
-                    console.log('DEBUG: Position is undefined, skipping renew')
+                    console.log('DEBUG: Skipping renew - waiting for geolocation')
                 }
             },
             { fireImmediately: true }
