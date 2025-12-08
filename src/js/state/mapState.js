@@ -22,7 +22,8 @@ class Map {
     mypositionGroup
     footprintGroup
     liveFootprintGroup
-    @observable mockposition = mapConstant.DEFAULT_CENTER_POSITION
+    isInitialized = false  // Flag to prevent API calls before geolocation
+    @observable mockposition = null  // Start as null, set when geolocation resolves
 
 
     init = (map) => {
@@ -46,7 +47,12 @@ class Map {
         this.liveFootprintGroup = L.layerGroup().addTo(this.map)
 
         // Debounced moveend handler to prevent excessive API calls during panning
+        // Only triggers AFTER isInitialized is true (after first setMyPosition)
         const debouncedMoveEnd = debounce(() => {
+            if (!this.isInitialized) {
+                console.log('DEBUG: Map moveend ignored - waiting for geolocation')
+                return
+            }
             const center = this.map.getCenter()
             console.log('DEBUG: Map moveend (debounced). Updating mockposition to:', center)
             this.mockTo(center)
@@ -73,6 +79,10 @@ class Map {
         L.marker(position, { icon: Lmyposition, zIndexOffset: 10 })
             .addTo(this.mypositionGroup)
         this.mypositionGroup.addTo(this.map)
+
+        // Enable moveend listener after first position is set
+        this.isInitialized = true
+        console.log('DEBUG: Map initialized with position:', position)
     }
 
     setFootprintbyRequest = (id) => {
